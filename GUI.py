@@ -1,5 +1,6 @@
 # BCI GUI
 
+import File_watcher
 import pygame
 from pygame.locals import *
 pygame.init()
@@ -10,6 +11,8 @@ BACKGROUND = (0, 0, 0) #black
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 font = pygame.font.SysFont(None, 40)
+
+STIM = [5, 6, 7, 8]
 
 # Displaying window size
 WIN = pygame.display.set_mode((WIDTH, HEIGHT),0,32)
@@ -28,6 +31,20 @@ button_1 = pygame.Rect(150, 350, 100, 100)
 button_2 = pygame.Rect(550, 350, 100, 100)
 button_3 = pygame.Rect(350, 150, 100, 100)
 button_4 = pygame.Rect(350, 550, 100, 100)
+
+def get_inputfreq():
+    filename = '/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.CSV'
+    f = open(filename)
+    reg_val = int(f.read(1))
+    print(reg_val)
+    if reg_val == STIM[0]:
+        Menu_1()
+    elif reg_val == STIM[1]:
+        Menu_2()
+    elif reg_val == STIM[2]:
+        Menu_3()
+    elif reg_val == STIM[3]:
+        Menu_4()
 
 # Main menu loop 
 def main_menu():
@@ -55,9 +72,13 @@ def main_menu():
                     pygame.quit()
 
             if event.type == KEYDOWN:
+                if event.key == K_SPACE:
+                    get_inputfreq()
+
+            if event.type == KEYDOWN:
                 if event.key == K_UP:
                     Menu_1()
-
+                
             if event.type == KEYDOWN:
                 if event.key == K_DOWN:
                     Menu_2()
@@ -77,7 +98,7 @@ def Menu_1():
     running = True
     while running:
         draw_window()
-        draw_text('Menu 1', font, WHITE , WIN, 20, 20)
+        draw_text('Menu 5Hz', font, WHITE , WIN, 20, 20)
 
         pygame.draw.rect(WIN, (255, 0 , 0), button_1)
         pygame.draw.rect(WIN, (255, 0 , 0), button_2)
@@ -99,7 +120,7 @@ def Menu_2():
     while running:
 
         draw_window()
-        draw_text('Menu 2', font, WHITE , WIN, 20, 20)
+        draw_text('Menu 6Hz', font, WHITE , WIN, 20, 20)
 
         pygame.draw.rect(WIN, (255, 0 , 0), button_1)
         pygame.draw.rect(WIN, (255, 0 , 0), button_2)
@@ -122,7 +143,7 @@ def Menu_3():
     while running:
 
         draw_window()
-        draw_text('Menu 3', font, WHITE , WIN, 20, 20)
+        draw_text('Menu 7Hz', font, WHITE , WIN, 20, 20)
 
         pygame.draw.rect(WIN, (255, 0 , 0), button_1)
         pygame.draw.rect(WIN, (255, 0 , 0), button_2)
@@ -146,7 +167,7 @@ def Menu_4():
     while running:
 
         draw_window()
-        draw_text('Menu 4', font, WHITE , WIN, 20, 20)
+        draw_text('Menu 8Hz', font, WHITE , WIN, 20, 20)
 
         pygame.draw.rect(WIN, (255, 0 , 0), button_1)
         pygame.draw.rect(WIN, (255, 0 , 0), button_2)
