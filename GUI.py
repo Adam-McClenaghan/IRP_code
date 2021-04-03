@@ -1,6 +1,6 @@
 # BCI GUI
 
-import File_watcher
+import os
 import pygame
 from pygame.locals import *
 pygame.init()
@@ -11,6 +11,7 @@ BACKGROUND = (0, 0, 0) #black
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 font = pygame.font.SysFont(None, 40)
+
 
 STIM = [5, 6, 7, 8]
 
@@ -32,11 +33,17 @@ button_2 = pygame.Rect(550, 350, 100, 100)
 button_3 = pygame.Rect(350, 150, 100, 100)
 button_4 = pygame.Rect(350, 550, 100, 100)
 
+#Compares input frequency to stimulus frequencies
 def get_inputfreq():
     filename = '/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.CSV'
     f = open(filename)
-    reg_val = int(f.read(1))
-    print(reg_val)
+
+    excel_val = (f.read(1))
+    if excel_val.isdigit():
+        reg_val = int(excel_val)
+         
+    
+    
     if reg_val == STIM[0]:
         Menu_1()
     elif reg_val == STIM[1]:
@@ -48,10 +55,10 @@ def get_inputfreq():
 
 # Main menu loop 
 def main_menu():
-    
+    Last_mod = os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv')
     FPS = 60
     clock = pygame.time.Clock()
-    
+
     while True:
         clock.tick(FPS)
         draw_window()
@@ -61,7 +68,13 @@ def main_menu():
         pygame.draw.rect(WIN, RED, button_2)
         pygame.draw.rect(WIN, RED, button_3)
         pygame.draw.rect(WIN, RED, button_4)
+        
+        #compare time of last update and opens file
+        if os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv') > Last_mod:
+            get_inputfreq()
 
+    
+        
         click = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -90,6 +103,8 @@ def main_menu():
             if event.type == KEYDOWN:
                 if event.key == K_RIGHT:
                     Menu_4()
+
+        Last_mod = os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv')
 
         pygame.display.update()
 
@@ -183,5 +198,7 @@ def Menu_4():
                     running = False
 
         pygame.display.update()
-                    
+
+#Watch_func()
+
 main_menu()

@@ -56,3 +56,5 @@ def Watch_func():
     except KeyboardInterrupt:
         my_observer.stop()
         my_observer.join()
+
+Watch_func()

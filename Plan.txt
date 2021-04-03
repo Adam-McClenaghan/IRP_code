@@ -1,0 +1,8 @@
+Watch_file function now able to be called, work out where to call it
+
+Plan
+-- Output of GUI will be saved in a file
+
+-- Fusion compares time of file modification and compares
+
+--if time modified is greater then it executes script based on the output of the GUI
