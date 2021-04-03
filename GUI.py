@@ -1,0 +1,166 @@
+# BCI GUI
+
+import pygame
+from pygame.locals import *
+pygame.init()
+
+# Defining sizes and font
+WIDTH, HEIGHT = 800, 800    
+BACKGROUND = (0, 0, 0) #black
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+font = pygame.font.SysFont(None, 40)
+
+# Displaying window size
+WIN = pygame.display.set_mode((WIDTH, HEIGHT),0,32)
+pygame.display.set_caption("BCI Menus")
+
+def draw_text(text, font, colour, surface, x, y):
+    textobj = font.render(text, 1, colour)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
+
+def draw_window():
+    WIN.fill(BACKGROUND)
+
+button_1 = pygame.Rect(150, 350, 100, 100)
+button_2 = pygame.Rect(550, 350, 100, 100)
+button_3 = pygame.Rect(350, 150, 100, 100)
+button_4 = pygame.Rect(350, 550, 100, 100)
+
+# Main menu loop 
+def main_menu():
+    
+    FPS = 60
+    clock = pygame.time.Clock()
+    
+    while True:
+        clock.tick(FPS)
+        draw_window()
+        draw_text('main menu', font, WHITE , WIN, 20, 20)
+
+        pygame.draw.rect(WIN, RED, button_1)
+        pygame.draw.rect(WIN, RED, button_2)
+        pygame.draw.rect(WIN, RED, button_3)
+        pygame.draw.rect(WIN, RED, button_4)
+
+        click = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+
+            if event.type == KEYDOWN:
+                if event.key == K_UP:
+                    Menu_1()
+
+            if event.type == KEYDOWN:
+                if event.key == K_DOWN:
+                    Menu_2()
+
+            if event.type == KEYDOWN:
+                if event.key == K_LEFT:
+                    Menu_3()
+
+            if event.type == KEYDOWN:
+                if event.key == K_RIGHT:
+                    Menu_4()
+
+        pygame.display.update()
+
+# Define submenus
+def Menu_1():
+    running = True
+    while running:
+        draw_window()
+        draw_text('Menu 1', font, WHITE , WIN, 20, 20)
+
+        pygame.draw.rect(WIN, (255, 0 , 0), button_1)
+        pygame.draw.rect(WIN, (255, 0 , 0), button_2)
+        pygame.draw.rect(WIN, (255, 0 , 0), button_3)
+        pygame.draw.rect(WIN, (255, 0 , 0), button_4)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == KEYDOWN:
+                if event.key == K_DOWN:
+                    running = False
+                elif event.key == K_BACKSPACE:
+                    running = False
+
+        pygame.display.update()
+
+def Menu_2():
+    running = True
+    while running:
+
+        draw_window()
+        draw_text('Menu 2', font, WHITE , WIN, 20, 20)
+
+        pygame.draw.rect(WIN, (255, 0 , 0), button_1)
+        pygame.draw.rect(WIN, (255, 0 , 0), button_2)
+        pygame.draw.rect(WIN, (255, 0 , 0), button_3)
+        pygame.draw.rect(WIN, (255, 0 , 0), button_4)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == KEYDOWN:
+                if event.key == K_BACKSPACE:
+                    running = False
+                elif event.key == K_UP:
+                    running = False
+
+        pygame.display.update()
+
+
+def Menu_3():
+    running = True
+    while running:
+
+        draw_window()
+        draw_text('Menu 3', font, WHITE , WIN, 20, 20)
+
+        pygame.draw.rect(WIN, (255, 0 , 0), button_1)
+        pygame.draw.rect(WIN, (255, 0 , 0), button_2)
+        pygame.draw.rect(WIN, (255, 0 , 0), button_3)
+        pygame.draw.rect(WIN, (255, 0 , 0), button_4)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == KEYDOWN:
+                if event.key == K_BACKSPACE:
+                    running = False
+                elif event.key == K_RIGHT:
+                    running = False
+
+        pygame.display.update()
+
+
+def Menu_4():
+    running = True
+    while running:
+
+        draw_window()
+        draw_text('Menu 4', font, WHITE , WIN, 20, 20)
+
+        pygame.draw.rect(WIN, (255, 0 , 0), button_1)
+        pygame.draw.rect(WIN, (255, 0 , 0), button_2)
+        pygame.draw.rect(WIN, (255, 0 , 0), button_3)
+        pygame.draw.rect(WIN, (255, 0 , 0), button_4)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == KEYDOWN:
+                if event.key == K_BACKSPACE:
+                    running = False
+                elif event.key == K_LEFT:
+                    running = False
+
+        pygame.display.update()
+                    
+main_menu()
