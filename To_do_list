@@ -1,12 +1,17 @@
--Implement comms between matlab and GUI
+-Implement comms between matlab and GUI --Done
 
--Put in watchdog moadule and implement that
+-Put in watchdog moadule and implement that --Done
 
--Create flashing, and add text to buttons
+-Create flashing, and add text to buttons --Done
+
+-Create backtracking capability --Done
 
 -Research into shapes of stimuli and add to paper bank
 
--FIgure out how GUI comms with autodesk
+-FIgure out how GUI comms with autodesk --Done
 
 -Start thinking about writing early sections
+
+-Tomorrow Get Fusion to read CSV, come up with ideas for code to implement
+
 
