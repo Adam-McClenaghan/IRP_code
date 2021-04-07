@@ -1,5 +1,5 @@
 # BCI GUI
-
+import math
 import os
 import pygame
 from pygame.locals import *
@@ -33,18 +33,16 @@ def draw_window():
     WIN.fill(BACKGROUND)
 
 # Button creation
-def Button(freq, x, y, count):
+def Button(freq, x, y, count, phase_off):
+    Bri = 0.5 * (1+ math.sin(2 * math.pi * freq *(count / 60) + phase_off))
     button_param = pygame.Rect(x, y, BUTTON_HEIGHT, BUTTON_WIDTH)
-    if count % freq == 60 % freq:
-        colour = RED
-    else:
-        colour = BLACK
-    
+    rgb_colour = round(Bri * 255.0)
+    colour = (rgb_colour, rgb_colour, rgb_colour)
     pygame.draw.rect(WIN, colour, button_param)
 
 #Add text on top of buttons  
 def addText(Text, x, y):
-    WIN.blit(option_font.render(Text, True, WHITE), (x, y))
+    WIN.blit(option_font.render(Text, True, RED), (x, y))
     
 
 #Compares input frequency to stimulus frequencies
@@ -98,12 +96,12 @@ def main_menu():
         clock.tick(FPS)
         draw_window()
         draw_text('main menu', font, WHITE , WIN, 20, 20)
-        if count >= 60: count = 0
+        if count >= FPS: count = 0
         
-        Button(5, 150, 350, count)
-        Button(6, 550, 350, count)
-        Button(7, 350, 150, count)
-        Button(8, 350, 550, count)
+        Button(5, 150, 350, count, 0)
+        Button(6, 550, 350, count, 0)
+        Button(7, 350, 150, count, 0)
+        Button(8, 350, 550, count, 0)
 
         addText("Menu 5Hz", 160, 400)
         addText("Menu 6Hz", 560, 400)
@@ -160,10 +158,10 @@ def Menu_1():
         draw_text('Menu 5Hz', font, WHITE , WIN, 20, 20)
         if sub_count >= 60: sub_count = 0
 
-        Button(5, 150, 350, sub_count)
-        Button(6, 550, 350, sub_count)
-        Button(7, 350, 150, sub_count)
-        Button(8, 350, 550, sub_count)
+        Button(5, 150, 350, sub_count, 0)
+        Button(6, 550, 350, sub_count, 0)
+        Button(7, 350, 150, sub_count, 0)
+        Button(8, 350, 550, sub_count, 0)
 
         addText("Option 1", 160, 400)
         addText("Option 2", 560, 400)
@@ -199,10 +197,10 @@ def Menu_2():
         draw_text('Menu 6Hz', font, WHITE , WIN, 20, 20)
         if count >= 60: count = 0
 
-        Button(5, 150, 350, count)
-        Button(6, 550, 350, count)
-        Button(7, 350, 150, count)
-        Button(8, 350, 550, count)
+        Button(5, 150, 350, count, 0)
+        Button(6, 550, 350, count, 0)
+        Button(7, 350, 150, count, 0)
+        Button(8, 350, 550, count, 0)
 
         addText("Option 1", 160, 400)
         addText("Option 2", 560, 400)
@@ -238,10 +236,10 @@ def Menu_3():
         draw_text('Menu 7Hz', font, WHITE , WIN, 20, 20)
         if count >= 60: count = 0
 
-        Button(5, 150, 350, count)
-        Button(6, 550, 350, count)
-        Button(7, 350, 150, count)
-        Button(8, 350, 550, count)
+        Button(5, 150, 350, count, 0)
+        Button(6, 550, 350, count, 0)
+        Button(7, 350, 150, count, 0)
+        Button(8, 350, 550, count, 0)
 
         addText("Option 1", 160, 400)
         addText("Option 2", 560, 400)
@@ -277,10 +275,10 @@ def Menu_4():
         draw_text('Menu 8Hz', font, WHITE , WIN, 20, 20)
         if count >= 60: count = 0
 
-        Button(5, 150, 350, count)
-        Button(6, 550, 350, count)
-        Button(7, 350, 150, count)
-        Button(8, 350, 550, count)
+        Button(5, 150, 350, count, 0)
+        Button(6, 550, 350, count, 0)
+        Button(7, 350, 150, count, 0)
+        Button(8, 350, 550, count, 0)
 
         addText("Option 1", 160, 400)
         addText("Option 2", 560, 400)
