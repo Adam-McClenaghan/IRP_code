@@ -15,8 +15,11 @@
 -Tomorrow Get Fusion to read CSV, come up with ideas for code to implement --Done
 
 -Tomorrow: speed up Matlab code for dataset 2.
-	   Run tests for different combos of harmonics and trial length.
+	   Run tests for different combos of harmonics and trial length. --Done for experienced
 	   Pick test subjects combo of novice and experienced.
 	   Do trial for Dataset 1 as well, write up disclaimer talking about why data is shit
 
+-Tomorrow: Do tests for novice users, create graphs? -- Still to do
+	   Start coding fusion implementation, finish camera functionality --Done
 
+-Implement rotation of camera, change other menus to 2nd dataset

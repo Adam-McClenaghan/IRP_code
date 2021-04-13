@@ -188,14 +188,14 @@ def Menu_1():
         Button(14, 350, 575, sub_count, 1.5)
         Button(15, 575, 575, sub_count, 1.75)
 
-        addText("Option 1", 125, 125)
-        addText("Option 2", 350, 125)
-        addText("Option 3", 575, 125)
-        addText("Option 4", 125, 350)
-        addText("Option 5", 575, 350)
-        addText("Option 6", 125, 575)
-        addText("Option 7", 350, 575)
-        addText("Back", 575, 575)
+        addText('Top view (8)', 125, 125)
+        addText("Bottom view (9)", 350, 125)
+        addText("Front view (10)", 575, 125)
+        addText("Back view (11)", 125, 350)
+        addText("Left view (12)", 575, 350)
+        addText("Right view (13)", 125, 575)
+        addText("Previous view (14)", 350, 575)
+        addText("Back (15)", 575, 575)
 
         if os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv') > Last_mod:
             Submenu_freq()
