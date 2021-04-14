@@ -29,19 +29,19 @@ class ThreadEventHandler(adsk.core.CustomEventHandler):
             
             # Compare value passed to event to known stimulus frequencies
             if newValue == STIM[0]:
-                y_up(app, app.activeViewport)
+                x_up(app, app.activeViewport)
             elif newValue == STIM[1]:
-                y_down(app, app.activeViewport)
+                x_down(app, app.activeViewport)
             elif newValue == STIM[2]:
                 # Event_10()
-                x_up(app, app.activeViewport)
+                y_up(app, app.activeViewport)
             elif newValue == STIM[3]:
                 # Event_11()
-                x_down(app, app.activeViewport)
+                y_down(app, app.activeViewport)
             elif newValue == STIM[4]:
-                Event_12()
+                z_up(app, app.activeViewport)
             elif newValue == STIM[5]:
-                Event_13()
+                z_down(app, app.activeViewport)
             elif newValue == STIM[6]:
                 Event_14()
             elif newValue == STIM[7]:
@@ -86,17 +86,17 @@ def get_freq():
 
 # Defining events associated with each frequency
 def Event_8():
-    # ui.messageBox('Event 5')
+     ui.messageBox('Event 8')
 
-    global app
-    app = adsk.core.Application.get()
-    camera = app.activeViewport.camera
+    # global app
+    # app = adsk.core.Application.get()
+    # camera = app.activeViewport.camera
 
-    camera.viewOrientation = adsk.core.ViewOrientations.LeftViewOrientation
+    # camera.viewOrientation = adsk.core.ViewOrientations.LeftViewOrientation
 
-    camera.isFitView = True
+    # camera.isFitView = True
 
-    app.activeViewport.camera = camera
+    # app.activeViewport.camera = camera
 
 def Event_9():
     # ui.messageBox('Event 6')
@@ -167,113 +167,168 @@ def Event_15():
 
 
 def y_up(app, view):
-        global User_angle
-        camera = view.camera
-        ui = app.userInterface
-        start_coords = [camera.eye.x , camera.eye.y, camera.eye.z]
+    global User_angle
+    camera = view.camera
+    ui = app.userInterface
+    start_coords = [camera.eye.x, camera.eye.y, camera.eye.z]
 
-        radius = math.sqrt(start_coords[0] ** 2 + start_coords[2] ** 2)
-        angle = User_angle * (math.pi / 180)
+    angle = math.radians(User_angle)
+    C = math.cos(angle)
+    S = math.sin(angle)
+    target = camera.target
+    up = [camera.upVector.x, camera.upVector.y, camera.upVector.z]
 
-        rotation_mat = [math.cos(angle), -math.sin(angle), math.sin(angle), math.cos(angle)] 
+    #rotation about y axis
+    new_up = adsk.core.Vector3D.create(up[0] * C + up[2] * S , up[1], up[0] * -S + up[2] * C)
+    new_coords = [start_coords[0] * C + start_coords[2] * S , start_coords[1], start_coords[0] * -S + start_coords[2] * C]
+    eye = adsk.core.Point3D.create(new_coords[0], new_coords[1], new_coords[2])
 
-        target = adsk.core.Point3D.create(0,0,0) #Point about rotation
-        up = adsk.core.Vector3D.create(0,1,0) #Axis of rotation
-        #rotation about y axis
-        new_coords = [start_coords[0] * rotation_mat[0] + start_coords[2] * rotation_mat[1], start_coords[1], start_coords[0] * rotation_mat[2] + start_coords[2] * rotation_mat[3]]
-       
-        eye = adsk.core.Point3D.create(new_coords[0], new_coords[1], new_coords[2])
-        
-        camera.eye = eye
-        camera.target = target
-        camera.upVector = up
+    camera.eye = eye
+    camera.target = target
+    camera.upVector = new_up
 
-        camera.isSmoothTransition = False
-        view.camera = camera
-        adsk.doEvents()
-        view.refresh()
-
+    camera.isSmoothTransition = False
+    view.camera = camera
+    adsk.doEvents()
+    view.refresh()
 
 def y_down(app, view):
-        global User_angle
-        camera = view.camera
-        ui = app.userInterface
-        start_coords = [camera.eye.x , camera.eye.y, camera.eye.z]
+    global User_angle
+    camera = view.camera
+    ui = app.userInterface
+    start_coords = [camera.eye.x, camera.eye.y, camera.eye.z]
 
-        radius = math.sqrt(start_coords[0] ** 2 + start_coords[2] ** 2)
-        angle = -User_angle * (math.pi / 180)
+    angle = -math.radians(User_angle)
+    C = math.cos(angle)
+    S = math.sin(angle)
+    target = camera.target
+    up = [camera.upVector.x, camera.upVector.y, camera.upVector.z]
 
-        rotation_mat = [math.cos(angle), -math.sin(angle), math.sin(angle), math.cos(angle)] 
+    #rotation about y axis
+    new_up = adsk.core.Vector3D.create(up[0] * C + up[2] * S , up[1], up[0] * -S + up[2] * C)
+    new_coords = [start_coords[0] * C + start_coords[2] * S , start_coords[1], start_coords[0] * -S + start_coords[2] * C]
+    eye = adsk.core.Point3D.create(new_coords[0], new_coords[1], new_coords[2])
 
-        target = adsk.core.Point3D.create(0,0,0) #Point about rotation
-        up = adsk.core.Vector3D.create(0,1,0) #Axis of rotation
-        #rotation about y axis
-        new_coords = [start_coords[0] * rotation_mat[0] + start_coords[2] * rotation_mat[1], start_coords[1], start_coords[0] * rotation_mat[2] + start_coords[2] * rotation_mat[3]]
-       
-        eye = adsk.core.Point3D.create(new_coords[0], new_coords[1], new_coords[2])
-        
-        camera.eye = eye
-        camera.target = target
-        camera.upVector = up
+    camera.eye = eye
+    camera.target = target
+    camera.upVector = new_up
 
-        camera.isSmoothTransition = False
-        view.camera = camera
-        adsk.doEvents()
-        view.refresh()
+    camera.isSmoothTransition = False
+    view.camera = camera
+    adsk.doEvents()
+    view.refresh()
 
 
-# def x_up(app, view):
-#         global User_angle
-#         camera = view.camera
-#         ui = app.userInterface
-#         start_coords = [camera.eye.x , camera.eye.y, camera.eye.z]
+def x_up(app, view):
+    global User_angle
+    camera = view.camera
+    ui = app.userInterface
+    start_coords = [camera.eye.x, camera.eye.y, camera.eye.z]
 
-#         radius = math.sqrt(start_coords[0] ** 2 + start_coords[2] ** 2)
-#         angle = User_angle * (math.pi / 180)
+    angle = math.radians(User_angle)
+    C = math.cos(angle)
+    S = math.sin(angle)
 
-#         rotation_mat = [math.cos(angle), -math.sin(angle), math.sin(angle), math.cos(angle)] 
+    target = camera.target
+    up = [camera.upVector.x, camera.upVector.y, camera.upVector.z]
 
-#         target = adsk.core.Point3D.create(0,0,0) #Point about rotation
-#         up = adsk.core.Vector3D.create(0,1,0) #Axis of rotation
-#         #rotation about x axis
-#         new_coords = [start_coords[0], start_coords[1] * rotation_mat[0] + start_coords[2] * rotation_mat[1], start_coords[1] * rotation_mat[2] + start_coords[2] * rotation_mat[3]]
-#         eye = adsk.core.Point3D.create(new_coords[0], new_coords[1], new_coords[2])
-        
-#         camera.eye = eye
-#         camera.target = target
-#         camera.upVector = up
+    #Rotation about x axis
+    new_up = adsk.core.Vector3D.create(up[0], up[1] * C - up[2] * S, up[1] * S + up[2] * C)
+    new_coords = [start_coords[0], start_coords[1] * C - start_coords[2] * S, start_coords[1] * S + start_coords[2] * C]
+    eye = adsk.core.Point3D.create(new_coords[0], new_coords[1], new_coords[2])
 
-#         camera.isSmoothTransition = False
-#         view.camera = camera
-#         adsk.doEvents()
-#         view.refresh()
 
-# def x_down(app, view):
-#         global User_angle
-#         camera = view.camera
-#         ui = app.userInterface
-#         start_coords = [camera.eye.x , camera.eye.y, camera.eye.z]
+    camera.eye = eye
+    camera.target = target
+    camera.upVector = new_up
 
-#         radius = math.sqrt(start_coords[0] ** 2 + start_coords[2] ** 2)
-#         angle = User_angle * (math.pi / 180)
+    camera.isSmoothTransition = False
+    view.camera = camera
+    adsk.doEvents()
+    view.refresh()
 
-#         rotation_mat = [math.cos(angle), -math.sin(angle), math.sin(angle), math.cos(angle)] 
 
-#         target = adsk.core.Point3D.create(0,0,0) #Point about rotation
-#         up = adsk.core.Vector3D.create(0,1,0) #Axis of rotation
-#         #rotation about x axis
-#         new_coords = [start_coords[0], start_coords[1] * rotation_mat[0] + start_coords[2] * rotation_mat[1], start_coords[1] * rotation_mat[2] + start_coords[2] * rotation_mat[3]]
-#         eye = adsk.core.Point3D.create(new_coords[0], new_coords[1], new_coords[2])
-        
-#         camera.eye = eye
-#         camera.target = target
-#         camera.upVector = up
+def x_down(app, view):
+    global User_angle
+    camera = view.camera
+    ui = app.userInterface
+    start_coords = [camera.eye.x, camera.eye.y, camera.eye.z]
 
-#         camera.isSmoothTransition = False
-#         view.camera = camera
-#         adsk.doEvents()
-#         view.refresh()
+    angle = -math.radians(User_angle)
+    C = math.cos(angle)
+    S = math.sin(angle)
 
+    target = camera.target
+    up = [camera.upVector.x, camera.upVector.y, camera.upVector.z]
+
+    #Rotation about x axis
+    new_up = adsk.core.Vector3D.create(up[0], up[1] * C - up[2] * S, up[1] * S + up[2] * C)
+    new_coords = [start_coords[0], start_coords[1] * C - start_coords[2] * S, start_coords[1] * S + start_coords[2] * C]
+    eye = adsk.core.Point3D.create(new_coords[0], new_coords[1], new_coords[2])
+
+
+    camera.eye = eye
+    camera.target = target
+    camera.upVector = new_up
+
+    camera.isSmoothTransition = False
+    view.camera = camera
+    adsk.doEvents()
+    view.refresh()
+
+def z_up(app, view):
+    global User_angle
+    camera = view.camera
+    ui = app.userInterface
+    start_coords = [camera.eye.x, camera.eye.y, camera.eye.z]
+
+    angle = math.radians(User_angle)
+    C = math.cos(angle)
+    S = math.sin(angle)
+
+    target = camera.target
+    up = [camera.upVector.x, camera.upVector.y, camera.upVector.z]
+
+    #Rotation about z axis
+    new_up = adsk.core.Vector3D.create(up[0] * C - (up[1] * S), (up[0] * S + up[1] * C), up[2])
+    new_coords = [start_coords[0] * C - (start_coords[1] * S), (start_coords[0] * S + start_coords[1] * C), start_coords[2]]
+    eye = adsk.core.Point3D.create(new_coords[0], new_coords[1], new_coords[2])
+
+    camera.eye = eye
+    camera.target = target
+    camera.upVector = new_up
+
+    camera.isSmoothTransition = False
+    view.camera = camera
+    adsk.doEvents()
+    view.refresh()
+
+def z_down(app, view):
+    global User_angle
+    camera = view.camera
+    ui = app.userInterface
+    start_coords = [camera.eye.x, camera.eye.y, camera.eye.z]
+
+    angle = -math.radians(User_angle)
+    C = math.cos(angle)
+    S = math.sin(angle)
+
+    target = camera.target
+    up = [camera.upVector.x, camera.upVector.y, camera.upVector.z]
+
+    #Rotation about z axis
+    new_up = adsk.core.Vector3D.create(up[0] * C - (up[1] * S), (up[0] * S + up[1] * C), up[2])
+    new_coords = [start_coords[0] * C - (start_coords[1] * S), (start_coords[0] * S + start_coords[1] * C), start_coords[2]]
+    eye = adsk.core.Point3D.create(new_coords[0], new_coords[1], new_coords[2])
+
+    camera.eye = eye
+    camera.target = target
+    camera.upVector = new_up
+
+    camera.isSmoothTransition = False
+    view.camera = camera
+    adsk.doEvents()
+    view.refresh()
 
 def run(context):
     global ui

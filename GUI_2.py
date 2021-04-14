@@ -103,6 +103,10 @@ def Submenu_freq():
             f.write('14')
         elif reg_val == STIM[7]:
             Submenu_freq.outcome = False
+        
+def manual_freq(frequency):
+    f = open('/Users/Adam/Desktop/IRP_CODE/GUI_outcome.csv', 'w')
+    f.write(str(frequency))
 
 
 # Main menu loop 
@@ -218,23 +222,33 @@ def Menu_2():
     Last_mod = os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv')
     FPS = 60
     clock = pygame.time.Clock()
-    count = 0
+    sub_count = 0
     running = True
     while running:
         clock.tick(FPS)
         draw_window()
-        draw_text('Menu 6Hz', font, WHITE , WIN, 20, 20)
-        if count >= 60: count = 0
+        draw_text('X', font, WHITE , WIN, 400, 175)
+        draw_text('Y', font, WHITE , WIN, 400, 375)
+        draw_text('Z', font, WHITE , WIN, 400, 575)
+        if sub_count >= 60: sub_count = 0
 
-        Button(4, 150, 350, count, 0)
-        Button(3, 550, 350, count, 0)
-        Button(2, 350, 150, count, 0)
-        Button(1, 350, 550, count, 0)
+        Button(8, 250, 150, sub_count, 0)
+        Button(9, 450, 150, sub_count, 0.25)
+        Button(10, 250, 350, sub_count, 0.5)
+        Button(11, 450, 350, sub_count, 0.75)
+        Button(12, 250, 550, sub_count, 1)
+        Button(13, 450, 550, sub_count, 1.25)
+        Button(14, 675, 350, sub_count, 1.5)
+        Button(15, 25, 350, sub_count, 1.75)
 
-        addText("Option 1", 160, 400)
-        addText("Option 2", 560, 400)
-        addText("Option 3", 360, 200)
-        addText("Back", 380, 600)
+        addText('<< (8)', 250, 150)
+        addText(">> (9)", 450, 150)
+        addText("<< (10)", 250, 350)
+        addText(">> (11)", 450, 350)
+        addText("<< (12)", 250, 550)
+        addText(">> (13)", 450, 550)
+        addText("Back (14)", 675, 350)
+        addText("Home (15)", 25, 350)
 
         if os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv') > Last_mod:
             Submenu_freq()
@@ -244,14 +258,29 @@ def Menu_2():
             if event.type == pygame.QUIT:
                 pygame.quit()
             if event.type == KEYDOWN:
-                if event.key == K_BACKSPACE:
+                if event.key == K_DOWN:
                     running = False
-                elif event.key == K_UP:
+                elif event.key == K_ESCAPE:
                     running = False
-        count += 1
+                elif event.key == K_1:
+                    manual_freq(8)
+                elif event.key == K_2:
+                    manual_freq(9)
+                elif event.key == K_3:
+                    manual_freq(10)
+                elif event.key == K_4:
+                    manual_freq(11)
+                elif event.key == K_5:
+                    manual_freq(12)
+                elif event.key == K_6:
+                    manual_freq(13)
+                elif event.key == K_7:
+                    manual_freq(14)
+                elif event.key == K_8:
+                    manual_freq(15)
+        sub_count += 1
         Last_mod = os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv')
         pygame.display.update()
-
 
 def Menu_3():
     Last_mod = os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv')
