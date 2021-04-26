@@ -3,18 +3,31 @@ import math
 import os
 import pygame
 from pygame.locals import *
+import win32api
+import win32con
+import win32gui
+import Aerofoil_point_gen
 pygame.init()
 
 # Defining sizes and font
-WIDTH, HEIGHT = 800, 800    
+# WIDTH, HEIGHT = 800, 800  
+WIDTH, HEIGHT = pygame.display.Info().current_w - 100, pygame.display.Info().current_h - 100
 BACKGROUND = (0, 0, 0) #black
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
+GREEN = (0, 255, 0)
+TRAN = (255, 0, 128)
 font = pygame.font.SysFont(None, 40)
 option_font = pygame.font.SysFont(None, 25)
 BUTTON_HEIGHT = 100
 BUTTON_WIDTH = 100
+Chord_length = 100
+Thickness = 10
+Extrude_thickness = 100
+Max_len_dia = pygame.image.load('Max_len_dia.png')
+Max_thick_dia = pygame.image.load('Max_thick_dia.png')
+
 
 
 STIM = [8, 9, 10, 11, 12, 13, 14, 15]
@@ -23,6 +36,21 @@ STIM = [8, 9, 10, 11, 12, 13, 14, 15]
 WIN = pygame.display.set_mode((WIDTH, HEIGHT),0,32)
 pygame.display.set_caption("BCI Menus")
 
+
+def Image(Image, x,y):
+    Resized = pygame.transform.smoothscale(Image, (200, 100))
+    WIN.blit(Resized, (x,y))
+
+
+# Set window transparency color
+hwnd = pygame.display.get_wm_info()["window"]
+win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE,
+                       win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE) | win32con.WS_EX_LAYERED)
+win32gui.SetLayeredWindowAttributes(hwnd, win32api.RGB(*TRAN), 0, win32con.LWA_COLORKEY)
+
+# Set window transparency colour 
+win32gui.SetLayeredWindowAttributes(hwnd, win32api.RGB(*TRAN), 0, win32con.LWA_COLORKEY)
+
 def draw_text(text, font, colour, surface, x, y):
     textobj = font.render(text, 1, colour)
     textrect = textobj.get_rect()
@@ -30,23 +58,91 @@ def draw_text(text, font, colour, surface, x, y):
     surface.blit(textobj, textrect)
 
 def draw_window():
-    WIN.fill(BACKGROUND)
+    WIN.fill(TRAN)
+
+def Get_aero_ID():
+    global Thickness
+    global Chord_length
+    Suffix = 'NAC00'
+    xx = int(Chord_length / Thickness)
+    if xx < 10: Suffix += '0'
+    Suffix += str(xx)
+    return Suffix
+ 
+
+Main_menu_loc = {
+    '8' : [150, 150],
+    '9' : [WIDTH - (150 + BUTTON_WIDTH), 150],
+    '10': [150, HEIGHT - (150 + BUTTON_HEIGHT)],
+    '11': [WIDTH - (150 + BUTTON_WIDTH), HEIGHT - (150 + BUTTON_HEIGHT)]
+}
+
+Loc_1 = {
+    '8' : [125, 125],
+    '9' : [350, 125],
+    '10' : [575, 125],
+    '11' : [125, 350],
+    '12' : [575, 350],
+    '13' : [125, 575],
+    '14' : [350, 575],
+    '15' : [575, 575]
+}
+
+Loc_2 = {
+    '8' : [50, 50],
+    '9' : [WIDTH - (50 + BUTTON_WIDTH), 50],
+    '10' : [50, HEIGHT / 2 - (BUTTON_HEIGHT / 2)],
+    '11' : [WIDTH - (50 + BUTTON_WIDTH), HEIGHT / 2 - (BUTTON_HEIGHT / 2)],
+    '12' : [50, HEIGHT - (50 + BUTTON_HEIGHT)],
+    '13' : [WIDTH - (50 + BUTTON_WIDTH), HEIGHT - (50 + BUTTON_HEIGHT)],
+    '14' : [WIDTH / 2 - (BUTTON_WIDTH / 2), 50],
+    '15' : [WIDTH / 2 - (BUTTON_WIDTH / 2), HEIGHT - (50 + BUTTON_HEIGHT)]
+}
+
+AeroFoil_locs = {
+    '8' : [50, 50],
+    '9' : [WIDTH - (50 + BUTTON_WIDTH), 50],
+    '10' : [50, HEIGHT / 2 - (BUTTON_HEIGHT / 2)],
+    '11' : [WIDTH - (50 + BUTTON_WIDTH), HEIGHT / 2 - (BUTTON_HEIGHT / 2)],
+    '12' : [50, HEIGHT - (50 + BUTTON_HEIGHT)],
+    '13' : [WIDTH - (50 + BUTTON_WIDTH), HEIGHT - (50 + BUTTON_HEIGHT)],
+    '14' : [WIDTH / 2 - (BUTTON_WIDTH / 2), 50],
+    '15' : [WIDTH / 2 - (BUTTON_WIDTH / 2), HEIGHT - (50 + BUTTON_HEIGHT)]
+}
+
 
 # Button creation
-def Button(freq, x, y, count, phase_off): #Phase offset in terms of pi
+def Main_Button(freq, x, y, count, phase_off): #Phase offset in terms of pi
     Bri = 0.5 * (1+ math.sin(2 * math.pi * freq *(count / 60) + phase_off * math.pi))
     button_param = pygame.Rect(x, y, BUTTON_HEIGHT, BUTTON_WIDTH)
     rgb_colour = round(Bri * 255.0)
     colour = (rgb_colour, rgb_colour, rgb_colour)
     pygame.draw.rect(WIN, colour, button_param)
 
+def Button(freq, dict, count, phase_off): #Phase offset in terms of pi
+    Bri = 0.5 * (1+ math.sin(2 * math.pi * freq *(count / 60) + phase_off * math.pi))
+    x, y = dict[str(freq)]
+    button_param = pygame.Rect(x, y, BUTTON_HEIGHT, BUTTON_WIDTH)
+    rgb_colour = round(Bri * 255.0)
+    colour = (rgb_colour, rgb_colour, rgb_colour)
+    pygame.draw.rect(WIN, colour, button_param)
+
 #Add text on top of buttons  
-def addText(Text, x, y): # x and y correspond to coords of button to place text on
+def addText(freq, dict, Text): # x and y correspond to coords of button to place text on
+    x, y = dict[str(freq)]
     global BUTTON_HEIGHT
     global BUTTON_WIDTH
     WIN.blit(option_font.render(Text, True, RED), (x + (BUTTON_WIDTH - (len(Text) * 11)), y + BUTTON_HEIGHT/2))
-    
 
+def Value_text(Text, x, y):
+    WIN.blit(option_font.render(Text, True, RED), (x, y))
+
+def Disp_aero_ID(x,y):
+        Classification = Get_aero_ID()
+        draw_text('Aerofoil ID: ' + Classification, font, BLACK, WIN, WIDTH / 2 - 12, HEIGHT - 200)
+
+
+  
 #Compares input frequency to stimulus frequencies
 def get_inputfreq():
     filename = '/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.CSV'
@@ -82,6 +178,7 @@ def Submenu_freq():
         reg_val = int(excel_val)
         if reg_val == STIM[0]:
             f = open('/Users/Adam/Desktop/IRP_CODE/GUI_outcome.csv', 'w')
+            pygame.draw.rect(WIN, GREEN, 125, 125, BUTTON_WIDTH, BUTTON_HEIGHT, 3)
             f.write('8')
         elif reg_val == STIM[1]:
             f = open('/Users/Adam/Desktop/IRP_CODE/GUI_outcome.csv', 'w')
@@ -108,6 +205,13 @@ def manual_freq(frequency):
     f = open('/Users/Adam/Desktop/IRP_CODE/GUI_outcome.csv', 'w')
     f.write(str(frequency))
 
+def correct_guess(freq, dict, colour):
+    x, y = dict[str(freq)]
+    pygame.draw.rect(WIN, colour, (x, y, BUTTON_WIDTH + 10, BUTTON_HEIGHT + 10), 30)
+
+
+
+
 
 # Main menu loop 
 def main_menu():
@@ -120,18 +224,18 @@ def main_menu():
     while True:
         clock.tick(FPS)
         draw_window()
-        draw_text('Main menu', font, WHITE , WIN, 330, 400)
+        # draw_text('Main menu', font, WHITE , WIN, 330, 400)
         if count >= FPS: count = 0
         
-        Button(8, 150, 350, count, 0)
-        Button(9, 550, 350, count, 1)
-        Button(10, 350, 150, count, 0.5)
-        Button(11, 350, 550, count, 1.5)
+        Main_Button(8, 150, 150, count, 0)
+        Main_Button(9, WIDTH - (150 + BUTTON_WIDTH), 150, count, 1)
+        Main_Button(10, 150, HEIGHT - (150 + BUTTON_HEIGHT), count, 0.5)
+        Main_Button(11, WIDTH - (150 + BUTTON_WIDTH), HEIGHT - (150 + BUTTON_HEIGHT), count, 1.5)
 
-        addText("Menu 10Hz", 150, 350)
-        addText("Menu 9Hz", 550, 350)
-        addText("Menu 8Hz", 350, 150)
-        addText("Menu 11Hz", 350, 550)
+        addText(8, Main_menu_loc, "Menu 8Hz")
+        addText(9, Main_menu_loc, "Menu 9Hz")
+        addText(10, Main_menu_loc, "Menu 10Hz")
+        addText(11, Main_menu_loc, "Menu 11Hz")
         
         #compare time of last update and opens file
         if os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv') > Last_mod:
@@ -180,19 +284,19 @@ def Menu_1():
     while running:
         clock.tick(FPS)
         draw_window()
-        draw_text('Menu 8Hz', font, WHITE , WIN, 320, 400)
+        # draw_text('Menu 8Hz', font, WHITE , WIN, 320, 400)
         if sub_count >= 60: sub_count = 0
 
-        Button(8, 125, 125, sub_count, 0)
-        Button(9, 350, 125, sub_count, 0.25)
-        Button(10, 575, 125, sub_count, 0.5)
-        Button(11, 125, 350, sub_count, 0.75)
-        Button(12, 575, 350, sub_count, 1)
-        Button(13, 125, 575, sub_count, 1.25)
-        Button(14, 350, 575, sub_count, 1.5)
-        Button(15, 575, 575, sub_count, 1.75)
+        Button(8, Loc_1, sub_count, 0)
+        Button(9, Loc_1, sub_count, 0.25)
+        Button(10, Loc_1, sub_count, 0.5)
+        Button(11, Loc_1, sub_count, 0.75)
+        Button(12, Loc_1, sub_count, 1)
+        Button(13, Loc_1, sub_count, 1.25)
+        Button(14, Loc_1, sub_count, 1.5)
+        Button(15, Loc_1, sub_count, 1.75)
 
-        addText('Top view (8)', 125, 125)
+        addText(8, Loc_1, 'Top view (8)')
         addText("Bottom view (9)", 350, 125)
         addText("Front view (10)", 575, 125)
         addText("Back view (11)", 125, 350)
@@ -227,28 +331,28 @@ def Menu_2():
     while running:
         clock.tick(FPS)
         draw_window()
-        draw_text('X', font, WHITE , WIN, 400, 175)
-        draw_text('Y', font, WHITE , WIN, 400, 375)
-        draw_text('Z', font, WHITE , WIN, 400, 575)
+        # draw_text('X', font, WHITE , WIN, 400, 175)
+        # draw_text('Y', font, WHITE , WIN, 400, 375)
+        # draw_text('Z', font, WHITE , WIN, 400, 575)
         if sub_count >= 60: sub_count = 0
 
-        Button(8, 250, 150, sub_count, 0)
-        Button(9, 450, 150, sub_count, 0.25)
-        Button(10, 250, 350, sub_count, 0.5)
-        Button(11, 450, 350, sub_count, 0.75)
-        Button(12, 250, 550, sub_count, 1)
-        Button(13, 450, 550, sub_count, 1.25)
-        Button(14, 675, 350, sub_count, 1.5)
-        Button(15, 25, 350, sub_count, 1.75)
+        Button(8, Loc_2, sub_count, 0)
+        Button(9, Loc_2, sub_count, 0.25)
+        Button(10, Loc_2, sub_count, 0.5)
+        Button(11, Loc_2, sub_count, 0.75)
+        Button(12, Loc_2, sub_count, 1)
+        Button(13, Loc_2, sub_count, 1.25)
+        Button(14, Loc_2, sub_count, 1.5)
+        Button(15, Loc_2, sub_count, 1.75)
 
-        addText('<< (8)', 250, 150)
-        addText(">> (9)", 450, 150)
-        addText("<< (10)", 250, 350)
-        addText(">> (11)", 450, 350)
-        addText("<< (12)", 250, 550)
-        addText(">> (13)", 450, 550)
-        addText("Back (14)", 675, 350)
-        addText("Home (15)", 25, 350)
+        addText(8, Loc_2, '<< (8)')
+        addText(9, Loc_2, ">> (9)")
+        addText(10, Loc_2, "<< (10)")
+        addText(11, Loc_2, ">> (11)")
+        addText(12, Loc_2, "<< (12)")
+        addText(13, Loc_2, ">> (13)")
+        addText(14, Loc_2, "In (14)")
+        addText(15, Loc_2, "Out (15)")
 
         if os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv') > Last_mod:
             Submenu_freq()
@@ -264,20 +368,28 @@ def Menu_2():
                     running = False
                 elif event.key == K_1:
                     manual_freq(8)
+                    correct_guess(8, Loc_2, RED)
                 elif event.key == K_2:
                     manual_freq(9)
+                    correct_guess(9, Loc_2, RED)
                 elif event.key == K_3:
                     manual_freq(10)
+                    correct_guess(10, Loc_2, RED)
                 elif event.key == K_4:
                     manual_freq(11)
+                    correct_guess(11, Loc_2, RED)
                 elif event.key == K_5:
                     manual_freq(12)
+                    correct_guess(12, Loc_2, RED)
                 elif event.key == K_6:
                     manual_freq(13)
+                    correct_guess(13, Loc_2, RED)
                 elif event.key == K_7:
                     manual_freq(14)
+                    correct_guess(14, Loc_2, RED)
                 elif event.key == K_8:
                     manual_freq(15)
+                    correct_guess(15, Loc_2, RED)
         sub_count += 1
         Last_mod = os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv')
         pygame.display.update()
@@ -288,21 +400,41 @@ def Menu_3():
     clock = pygame.time.Clock()
     count = 0
     running = True
+    global Chord_length
+    global Thickness
+    global Extrude_thickness 
+
+    Thick_change = 1
+    Chord_change = 10
+    Extrude_change = 10
+
     while running:
         clock.tick(FPS)
         draw_window()
-        draw_text('Menu 7Hz', font, WHITE , WIN, 20, 20)
+        draw_text('Aerofoil Generator', font, WHITE , WIN, 20, 20)
         if count >= 60: count = 0
 
-        Button(5, 150, 350, count, 0)
-        Button(6, 550, 350, count, 0)
-        Button(7, 350, 150, count, 0)
-        Button(8, 350, 550, count, 0)
+        Button(8, AeroFoil_locs, count, 0)
+        Button(9, AeroFoil_locs, count, 0.25)
+        Button(10, AeroFoil_locs, count, 0.5)
+        Button(11, AeroFoil_locs, count, 0.75)
+        Button(12, AeroFoil_locs, count, 1)
+        Button(13, AeroFoil_locs, count, 1.25)
+        Button(14, AeroFoil_locs, count, 1.5)
+        Button(15, AeroFoil_locs, count, 1.75)
 
-        addText("Option 1", 160, 400)
-        addText("Option 2", 560, 400)
-        addText("Option 3", 360, 200)
-        addText("Back", 380, 600)
+        Image(Max_len_dia, 50, 200)
+        Image(Max_thick_dia, WIDTH - 50 - 200, 200)
+        Value_text('C = ' + str(Chord_length), 150, 200)
+        Value_text('T = ' + str(Thickness), WIDTH - 200, 200)
+        Disp_aero_ID(WIDTH / 2, HEIGHT - 200)
+        
+        addText(8, Loc_2, 'UP')
+        addText(10, Loc_2,'DOWN')
+        addText(9, Loc_2, 'UP')
+        addText(11, Loc_2, 'DOWN')
+        addText(14, AeroFoil_locs, str(Extrude_thickness))
+        addText(15, AeroFoil_locs, 'Generate')
 
         if os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv') > Last_mod:
             Submenu_freq()
@@ -316,6 +448,23 @@ def Menu_3():
                     running = False
                 elif event.key == K_RIGHT:
                     running = False
+                elif event.key == K_1:
+                    Chord_length += Chord_change
+                elif event.key == K_2:
+                    Chord_length -= Chord_change
+                elif event.key == K_3:
+                    Thickness += Thick_change
+                elif event.key == K_4:
+                    Thickness -= Thick_change
+                elif event.key == K_5:
+                    Extrude_thickness += Extrude_change
+                elif event.key == K_6:
+                    Extrude_thickness -= Extrude_change
+                elif event.key == K_7:
+                    manual_freq(14)
+                    correct_guess(14, Loc_2, RED)
+                elif event.key == K_8:
+                    Aerofoil_point_gen.Aero_create(Chord_length, Thickness)
         count += 1
         Last_mod = os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv')
         pygame.display.update()
