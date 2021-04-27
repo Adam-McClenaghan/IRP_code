@@ -7,6 +7,7 @@ import win32api
 import win32con
 import win32gui
 import Aerofoil_point_gen
+import Cambered_aero
 pygame.init()
 
 # Defining sizes and font
@@ -403,6 +404,8 @@ def Menu_3():
     global Chord_length
     global Thickness
     global Extrude_thickness 
+    M = 0.02
+    P = 0.4
 
     Thick_change = 1
     Chord_change = 10
@@ -464,7 +467,7 @@ def Menu_3():
                     manual_freq(14)
                     correct_guess(14, Loc_2, RED)
                 elif event.key == K_8:
-                    Aerofoil_point_gen.Aero_create(Chord_length, Thickness)
+                    Cambered_aero.Cambered_aero(Chord_length, Thickness, M, P)
         count += 1
         Last_mod = os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv')
         pygame.display.update()
