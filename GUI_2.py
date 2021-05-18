@@ -12,7 +12,7 @@ pygame.init()
 
 # Defining sizes and font
 # WIDTH, HEIGHT = 800, 800  
-WIDTH, HEIGHT = pygame.display.Info().current_w - 100, pygame.display.Info().current_h - 100
+WIDTH, HEIGHT = pygame.display.Info().current_w - 100, pygame.display.Info().current_h - 150
 BACKGROUND = (0, 0, 0) #black
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -26,8 +26,13 @@ BUTTON_WIDTH = 100
 Chord_length = 100
 Thickness = 10
 Extrude_thickness = 100
+M = 0.02
+P = 0.4
 Max_len_dia = pygame.image.load('Max_len_dia.png')
 Max_thick_dia = pygame.image.load('Max_thick_dia.png')
+M_dia = pygame.image.load('M_diagram.png')
+P_dia = pygame.image.load('P_diagram.png')
+
 
 
 
@@ -38,8 +43,8 @@ WIN = pygame.display.set_mode((WIDTH, HEIGHT),0,32)
 pygame.display.set_caption("BCI Menus")
 
 
-def Image(Image, x,y):
-    Resized = pygame.transform.smoothscale(Image, (200, 100))
+def Image(Image, width, height, x,y):
+    Resized = pygame.transform.smoothscale(Image, (width, height))
     WIN.blit(Resized, (x,y))
 
 
@@ -60,13 +65,17 @@ def draw_text(text, font, colour, surface, x, y):
 
 def draw_window():
     WIN.fill(TRAN)
+    # WIN.fill(BLACK)
 
 def Get_aero_ID():
     global Thickness
     global Chord_length
-    Suffix = 'NAC00'
+    global M
+    global P
+    Suffix = 'NACA'
     xx = int(Chord_length / Thickness)
-    if xx < 10: Suffix += '0'
+    Suffix += str(round(M * 100))
+    Suffix += str(round(P * 10))
     Suffix += str(xx)
     return Suffix
  
@@ -105,9 +114,9 @@ AeroFoil_locs = {
     '9' : [WIDTH - (50 + BUTTON_WIDTH), 50],
     '10' : [50, HEIGHT / 2 - (BUTTON_HEIGHT / 2)],
     '11' : [WIDTH - (50 + BUTTON_WIDTH), HEIGHT / 2 - (BUTTON_HEIGHT / 2)],
-    '12' : [50, HEIGHT - (50 + BUTTON_HEIGHT)],
-    '13' : [WIDTH - (50 + BUTTON_WIDTH), HEIGHT - (50 + BUTTON_HEIGHT)],
-    '14' : [WIDTH / 2 - (BUTTON_WIDTH / 2), 50],
+    '12' : [WIDTH / 2 - (150 + BUTTON_HEIGHT), 50],
+    '13' : [WIDTH /2 + 150, 50],
+    '14' : [WIDTH / 2 - 125, 100],
     '15' : [WIDTH / 2 - (BUTTON_WIDTH / 2), HEIGHT - (50 + BUTTON_HEIGHT)]
 }
 
@@ -126,21 +135,22 @@ def Button(freq, dict, count, phase_off): #Phase offset in terms of pi
     button_param = pygame.Rect(x, y, BUTTON_HEIGHT, BUTTON_WIDTH)
     rgb_colour = round(Bri * 255.0)
     colour = (rgb_colour, rgb_colour, rgb_colour)
-    pygame.draw.rect(WIN, colour, button_param)
+    # pygame.draw.rect(WIN, colour, button_param)
+    pygame.draw.rect(WIN, BLACK, button_param)
 
 #Add text on top of buttons  
 def addText(freq, dict, Text): # x and y correspond to coords of button to place text on
     x, y = dict[str(freq)]
     global BUTTON_HEIGHT
     global BUTTON_WIDTH
-    WIN.blit(option_font.render(Text, True, RED), (x + (BUTTON_WIDTH - (len(Text) * 11)), y + BUTTON_HEIGHT/2))
+    WIN.blit(option_font.render(Text, True, RED), (x + 20, y + BUTTON_HEIGHT/2))
 
 def Value_text(Text, x, y):
     WIN.blit(option_font.render(Text, True, RED), (x, y))
 
 def Disp_aero_ID(x,y):
-        Classification = Get_aero_ID()
-        draw_text('Aerofoil ID: ' + Classification, font, BLACK, WIN, WIDTH / 2 - 12, HEIGHT - 200)
+    Classification = Get_aero_ID()
+    draw_text('Aerofoil ID: ' + Classification, font, BLACK, WIN, x, y)
 
 
   
@@ -346,12 +356,12 @@ def Menu_2():
         Button(14, Loc_2, sub_count, 1.5)
         Button(15, Loc_2, sub_count, 1.75)
 
-        addText(8, Loc_2, '<< (8)')
-        addText(9, Loc_2, ">> (9)")
-        addText(10, Loc_2, "<< (10)")
-        addText(11, Loc_2, ">> (11)")
-        addText(12, Loc_2, "<< (12)")
-        addText(13, Loc_2, ">> (13)")
+        addText(8, Loc_2, '<< X (8)')
+        addText(9, Loc_2, " X >> (9)")
+        addText(10, Loc_2, "<< Y (10)")
+        addText(11, Loc_2, "Y >> (11)")
+        addText(12, Loc_2, "<< Z (12)")
+        addText(13, Loc_2, "Z >> (13)")
         addText(14, Loc_2, "In (14)")
         addText(15, Loc_2, "Out (15)")
 
@@ -404,8 +414,8 @@ def Menu_3():
     global Chord_length
     global Thickness
     global Extrude_thickness 
-    M = 0.02
-    P = 0.4
+    global M 
+    global P
 
     Thick_change = 1
     Chord_change = 10
@@ -414,7 +424,7 @@ def Menu_3():
     while running:
         clock.tick(FPS)
         draw_window()
-        draw_text('Aerofoil Generator', font, WHITE , WIN, 20, 20)
+        # draw_text('Aerofoil Generator', font, WHITE , WIN, 20, 20)
         if count >= 60: count = 0
 
         Button(8, AeroFoil_locs, count, 0)
@@ -423,20 +433,22 @@ def Menu_3():
         Button(11, AeroFoil_locs, count, 0.75)
         Button(12, AeroFoil_locs, count, 1)
         Button(13, AeroFoil_locs, count, 1.25)
-        Button(14, AeroFoil_locs, count, 1.5)
+        # Button(14, AeroFoil_locs, count, 1.5)
         Button(15, AeroFoil_locs, count, 1.75)
 
-        Image(Max_len_dia, 50, 200)
-        Image(Max_thick_dia, WIDTH - 50 - 200, 200)
+        Image(Max_len_dia, 200, 100, 50, 200)
+        Image(Max_thick_dia, 200, 100, WIDTH - 50 - 200, 200)
         Value_text('C = ' + str(Chord_length), 150, 200)
-        Value_text('T = ' + str(Thickness), WIDTH - 200, 200)
-        Disp_aero_ID(WIDTH / 2, HEIGHT - 200)
+        Value_text('T = ' + str(Thickness), WIDTH - 150, 240)
+        Disp_aero_ID(WIDTH / 2 - 150, HEIGHT - 200)
         
         addText(8, Loc_2, 'UP')
         addText(10, Loc_2,'DOWN')
         addText(9, Loc_2, 'UP')
         addText(11, Loc_2, 'DOWN')
-        addText(14, AeroFoil_locs, str(Extrude_thickness))
+        addText(12, AeroFoil_locs, 'UP')
+        addText(13, AeroFoil_locs, 'DOWN')
+        addText(14, AeroFoil_locs, ' Extrude thickness = ' + str(Extrude_thickness))
         addText(15, AeroFoil_locs, 'Generate')
 
         if os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv') > Last_mod:
@@ -464,7 +476,7 @@ def Menu_3():
                 elif event.key == K_6:
                     Extrude_thickness -= Extrude_change
                 elif event.key == K_7:
-                    manual_freq(14)
+                    Menu_4()
                     correct_guess(14, Loc_2, RED)
                 elif event.key == K_8:
                     Cambered_aero.Cambered_aero(Chord_length, Thickness, M, P)
@@ -479,21 +491,65 @@ def Menu_4():
     clock = pygame.time.Clock()
     count = 0
     running = True
+    global M
+    global P
+    global Extrude_thickness
+
+    M_change = 0.01
+    P_change = 0.1
+    Extrude_change = 10
+    
     while running:
         clock.tick(FPS)
         draw_window()
-        draw_text('Menu 8Hz', font, WHITE , WIN, 20, 20)
+        draw_text('Camber settings', font, WHITE , WIN, 20, 20)
         if count >= 60: count = 0
 
-        Button(5, 150, 350, count, 0)
-        Button(6, 550, 350, count, 0)
-        Button(7, 350, 150, count, 0)
-        Button(8, 350, 550, count, 0)
+        Button(8, AeroFoil_locs, count, 0)
+        Button(9, AeroFoil_locs, count, 0.25)
+        Button(10, AeroFoil_locs, count, 0.5)
+        Button(11, AeroFoil_locs, count, 0.75)
+        # Button(12, AeroFoil_locs, count, 1)
+        # Button(13, AeroFoil_locs, count, 1.25)
+        # Button(14, AeroFoil_locs, count, 1.5)
+        Button(15, AeroFoil_locs, count, 1.75)
 
-        addText("Option 1", 160, 400)
-        addText("Option 2", 560, 400)
-        addText("Option 3", 360, 200)
-        addText("Back", 380, 600)
+        Image(P_dia, 250, 100, WIDTH - 50 - 200, 200)
+        Image(M_dia, 250, 100, 50, 200)
+        Value_text('M = ' + str(round(M * 100)) + '%', 235, 210)
+        Value_text('P = ' + str(round(P * 100)) + '%', WIDTH - 100, 270)
+        addText(8, AeroFoil_locs, 'Up')
+        addText(9, AeroFoil_locs, 'Up')
+        addText(10, AeroFoil_locs, 'Down')
+        addText(11, AeroFoil_locs, 'Down')
+        addText(15, AeroFoil_locs, 'Back')
+
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == KEYDOWN:
+                if event.key == K_BACKSPACE:
+                    running = False
+                elif event.key == K_RIGHT:
+                    running = False
+                elif event.key == K_1:
+                    M += M_change
+                elif event.key == K_2:
+                    M -= M_change
+                elif event.key == K_3:
+                    P += P_change
+                elif event.key == K_4:
+                    P -= P_change
+                elif event.key == K_5:
+                    Extrude_thickness += Extrude_change
+                elif event.key == K_6:
+                    Extrude_thickness -= Extrude_change
+                elif event.key == K_7:
+                    Menu_4()
+                    correct_guess(14, Loc_2, RED)
+                elif event.key == K_8:
+                    running = False
 
         if os.path.getmtime('C:/Users/Adam/Documents/MENG_yr3/IRP_papers/pytest.csv') > Last_mod:
             Submenu_freq()

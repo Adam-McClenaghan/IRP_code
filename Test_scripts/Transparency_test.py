@@ -10,7 +10,7 @@ Transparent = (255, 0, 128)  # Transparency color
 dark_red = (139, 0, 0)
 
 # Set window transparency color
-hwnd = pygame.display.get_wm_info() #["window"]
+hwnd = pygame.display.get_wm_info() ["window"]
 win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE,
                        win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE) | win32con.WS_EX_LAYERED)
 win32gui.SetLayeredWindowAttributes(hwnd, win32api.RGB(*Transparent), 0, win32con.LWA_COLORKEY)

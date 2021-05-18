@@ -6,7 +6,7 @@ def Aero_create(Chord_len, thickness):
     # Chord_len = 120
     # thickness =  30
     t = thickness / Chord_len
-    Points_per_length = 0.5
+    Points_per_length = 0.1
 
 
     Suffix = 'NACA00'
@@ -43,15 +43,15 @@ def Aero_create(Chord_len, thickness):
     X_coords.extend(X_true[::-1])
     Y_coords = Y_true
     Y_coords.extend(Y_neg[::-1])
-    # Y_coords.append(0)
-    # X_coords.append(0)
-    # Z.append(0)
+    Y_coords.append(0)
+    X_coords.append(0)
+    Z.append(0)
 
     True_coords = zip(X_coords,Y_coords,Z)
-    # plt.plot(X_coords,Y_coords)
+    plt.plot(X_coords,Y_coords)
     # # ymax = plt.ylim()
     # # plt.ylim(0, 0.2)
-    # plt.show()
+    plt.show()
 
     with open('Aero_coords.csv', 'w', newline="") as f:
         writer = csv.writer(f)

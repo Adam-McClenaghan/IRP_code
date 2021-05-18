@@ -8,7 +8,7 @@ def Cambered_aero(Chord_len, thickness, M, P):
     # Chord_len = 120
     # thickness =  30
     t = thickness / Chord_len
-    Points_per_length = 0.5
+    Points_per_length = 0.3
     # M = 0.04 # Max camber
     # P = 0.4 # location of max camber (0 < p < 1)
     
@@ -91,6 +91,7 @@ def Cambered_aero(Chord_len, thickness, M, P):
 
     # plt.plot(X_tot,Y_tot)
     # plt.plot(X_L, Y_L)
+    # plt.show()
 
     
     # plt.show()
